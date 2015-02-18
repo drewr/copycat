@@ -1,0 +1,53 @@
+Name: copycat
+
+Version:  1.0.0
+Synopsis: The cat API companion
+
+Description: When you're tired of typing `curl -s localhost:9200`
+
+Homepage:           https://github.com/drewr/copycat
+License:            OtherLicense
+License-file:       LICENSE
+Author:             Drew Raines
+Maintainer:         Drew Raines <drew@raines.me>
+Category:           Utils
+Build-type:         Simple
+Cabal-version:      >= 1.20
+
+Extra-Source-Files: README.md
+
+flag developer
+  description: build in developer mode
+  default: False
+  manual: True
+
+library
+  hs-source-dirs: src
+  ghc-options: -Wall -fwarn-tabs -funbox-strict-fields
+  if flag(developer)
+    ghc-options:  -Werror
+  default-language: Haskell98
+  other-modules:
+    Copycat.Opts
+  Build-depends:
+        base >= 4.5 && < 5
+      , optparse-applicative
+      , lens
+      , bytestring
+      , wreq
+
+Executable es
+  hs-source-dirs: src
+  Main-is: Main.hs
+  Ghc-options: -threaded
+  default-language: Haskell98
+  Build-depends:
+        base >= 4.5 && < 5
+      , optparse-applicative
+      , wreq
+      , bytestring
+      , lens
+
+Source-repository head
+  type:     git
+  location: https://github.com/drewr/copycat
