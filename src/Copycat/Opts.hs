@@ -1,40 +1,52 @@
-
 module Copycat.Opts ( Options(..)
-                    , execParser
+                    , Command(..)
+                    , parseArgs
                     ) where
 
 import Options.Applicative
 
 type Url = String
-type Verbose = Bool
-type NodeList = String
-type IndexList = String
+data Verbosity = Normal
+               | Verbose
+               deriving (Show, Read)
+type WcList = String
+type Headers = String
 
-data Common = Common
-              { url :: String
-              , verbose :: Bool }
+data OptsCommon = OptsCommon
+                  { url :: Url
+                  , verbose :: Verbosity }
 
-data Api = Nodes NodeList
-         | Master
-         | Indices IndexList
+data Command = Nodes Headers WcList
+             | Master Headers
 
-data Options = Options Common Api
+data Options = Options OptsCommon Command
 
--- opts :: Parser Options
--- opts = Options
---   <$> strOption
-
-common :: Parser Common
-common = Common
+common :: Parser OptsCommon
+common = OptsCommon
   <$> strOption
-      ( long "url"
+      ( short 'u' <> long "url"
      <> metavar "URL"
      <> help "Instance URL" )
-  <*> switch
-      ( short 'v'
-     <> long "verbose"
+  <*> flag Normal Verbose
+      ( short 'v' <> long "verbose"
      <> help "Column headers" )
 
-parseNodes :: Parser Api
+parseNodes :: Parser Command
 parseNodes = Nodes
-  <$> argument str (metavar "NODES")
+  <$> argument str (metavar "HEADERS")
+  <*> argument str (metavar "NODES")
+
+parseMaster :: Parser Command
+parseMaster = Master
+  <$> argument str (metavar "HEADERS")
+
+parseCommand :: Parser Command
+parseCommand = subparser $
+  command "nodes" (info (helper <*> parseNodes) $ progDesc "desc for _cat/nodes") <>
+  command "master" (info (helper <*> parseMaster) $ progDesc "desc for _cat/master")
+
+parseOptions :: Parser Options
+parseOptions = Options <$> common <*> parseCommand
+
+parseArgs :: IO (Options)
+parseArgs = execParser (info (helper <*> parseOptions) $ progDesc "parser copycat")
