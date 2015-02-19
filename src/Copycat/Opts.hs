@@ -1,6 +1,8 @@
 module Copycat.Opts ( Options(..)
                     , Command(..)
                     , parseArgs
+                    , url
+                    , verbose
                     ) where
 
 import Options.Applicative
@@ -23,13 +25,14 @@ data Options = Options OptsCommon Command
 
 common :: Parser OptsCommon
 common = OptsCommon
-  <$> strOption
-      ( short 'u' <> long "url"
-     <> metavar "URL"
-     <> help "Instance URL" )
-  <*> flag Normal Verbose
-      ( short 'v' <> long "verbose"
-     <> help "Column headers" )
+  <$> strOption ( long "url"
+               <> short 'u'
+               <> value "http://localhost:9200"
+               <> metavar "URL"
+               <> help "Instance URL" )
+  <*> flag Normal Verbose ( long "verbose"
+               <> short 'v'
+               <> help "Column headers" )
 
 parseNodes :: Parser Command
 parseNodes = Nodes
@@ -49,4 +52,4 @@ parseOptions :: Parser Options
 parseOptions = Options <$> common <*> parseCommand
 
 parseArgs :: IO (Options)
-parseArgs = execParser (info (helper <*> parseOptions) $ progDesc "parser copycat")
+parseArgs = execParser (info parseOptions idm)
