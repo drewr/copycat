@@ -20,3 +20,16 @@ green open foo
 health status index
 green  open   foo
 #+END_SRC
+
+** Install
+*** Linux x86_64
+#+BEGIN_SRC
+curl https://download.elasticsearch.org/copycat/copycat-x86_64-linux >es
+chmod +x es
+#+END_SRC
+
+*** Mac OS X x86_64
+#+BEGIN_SRC
+curl https://download.elasticsearch.org/copycat/copycat-x86_64-osx >es
+chmod +x es
+#+END_SRC
