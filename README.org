@@ -19,6 +19,8 @@ green open foo
 % es indices -v -c health,status,index
 health status index
 green  open   foo
+% es -u http://localhost:9200 health
+1424982441 14:27:21 drewr.hotel green 3 2 200 100 0 0 0
 #+END_SRC
 
 ** Install
