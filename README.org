@@ -3,3 +3,20 @@
 [[http://upload.wikimedia.org/wikipedia/en/0/05/Copycat_Vanessa_Carlysle.jpg]]
 
 http://en.wikipedia.org/wiki/Copycat_(Marvel_Comics)
+
+** Usage
+
+#+BEGIN_SRC
+% es master
+MDmFVH3GQ-ifxG6xm7zsIQ hotel.local 10.0.1.200 Wolverine
+% es shards | tail -1
+foo 98 p STARTED 104575  67.6mb 10.0.1.200 Wolverine
+% es indices -v
+health status index pri rep docs.count docs.deleted store.size pri.store.size
+green  open   foo   100   1   10500000            0     12.9gb          6.9gb
+% es indices -c health,status,index
+green open foo
+% es indices -v -c health,status,index
+health status index
+green  open   foo
+#+END_SRC
