@@ -1,22 +1,26 @@
-module Copycat.Opts ( Options(..)
+module Copycat.Opts ( CommandLine(..)
                     , Opts(..)
+                    , Verbosity(..)
+                    , Columns
                     , parseArgs
                     ) where
 
 import Options.Applicative
 
 type Url = String
+type Command = String
+type Columns = String
 data Verbosity = Normal
                | Verbose
                deriving (Show, Read)
 
 data Opts = Opts
             { url :: Url
-            , verbose :: Verbosity }
+            , columns :: Columns
+            , verbose :: Verbosity
+            }
 
-type Command = String
-
-data Options = Options Command Opts
+data CommandLine = CommandLine Command Opts
 
 opts :: Parser Opts
 opts = Opts
@@ -25,18 +29,23 @@ opts = Opts
                <> value "http://localhost:9200"
                <> metavar "URL"
                <> help "Instance URL" )
+  <*> strOption ( long "columns"
+               <> short 'c'
+               <> value "default"
+               <> metavar "COLUMNS"
+               <> help "What columns to return" )
   <*> flag Normal Verbose ( long "verbose"
                <> short 'v'
-               <> help "Column headers" )
+               <> help "Show column headers?" )
 
 args :: Parser Command
 args = argument str ( metavar "API" <> help "cat API to call" )
 
-parseOptions :: Parser Options
-parseOptions = Options <$> args <*> opts
+parseCommandLine :: Parser CommandLine
+parseCommandLine = CommandLine <$> args <*> opts
 
-parseArgs :: IO (Options)
+parseArgs :: IO (CommandLine)
 parseArgs = execParser p
   where
-    p = info (helper <*> parseOptions)
+    p = info (helper <*> parseCommandLine)
       ( fullDesc <> progDesc "copycat!" <> header "the _cat companion" )
